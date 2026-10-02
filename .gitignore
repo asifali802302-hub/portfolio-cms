@@ -1,0 +1,33 @@
+# Java / Spring Boot
+backend/target/
+backend/*.log
+
+# Environment / Secrets
+.env
+.env.*
+backend/.env
+
+# Node / React / Vite
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+admin-panel/node_modules/
+admin-panel/dist/
+admin-panel/.vite/
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Operating System
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
