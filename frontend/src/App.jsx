@@ -213,9 +213,11 @@ const updateProject = (event) => {
 
         <nav>
           <a href="#home">Home</a>
-          <a href="#about">About</a>
-          <a href="#projects">Projects</a>
-          <a href="#contact">Contact</a>
+<a href="#about">About</a>
+<a href="#skills">Skills</a>
+<a href="#education">Education</a>
+<a href="#projects">Projects</a>
+<a href="#contact">Contact</a>
         </nav>
       </header>
 
@@ -249,13 +251,90 @@ const updateProject = (event) => {
 
 
         <section id="about" className="section">
-          <h2>About Me</h2>
+  <h2>About Me</h2>
 
-          <p>
-            I am an Information Science Engineering student interested in
-            Java, Spring Boot, React, databases and full-stack web development.
-          </p>
-        </section>
+  <p>
+    I am Md Asif Ali, an Information Science Engineering student
+    at East Point College of Engineering. I am interested in Java,
+    Spring Boot, React, PostgreSQL and full-stack web development.
+    I am currently building practical projects to improve my
+    development skills and grow as a Java Full Stack Developer.
+  </p>
+
+  <div className="about-details">
+    <div>
+      <strong>Education</strong>
+      <span>B.E. Information Science Engineering</span>
+    </div>
+
+    <div>
+      <strong>College</strong>
+      <span>East Point College of Engineering</span>
+    </div>
+
+    <div>
+      <strong>Status</strong>
+      <span>Student</span>
+    </div>
+  </div>
+</section>
+<section id="skills" className="section">
+  <h2>My Skills</h2>
+
+  <div className="skills-grid">
+    <div className="skill-card">
+      <h3>Java</h3>
+      <p>Core Java and object-oriented programming.</p>
+    </div>
+
+    <div className="skill-card">
+      <h3>Spring Boot</h3>
+      <p>Backend development and REST APIs.</p>
+    </div>
+
+    <div className="skill-card">
+      <h3>React</h3>
+      <p>Building interactive frontend applications.</p>
+    </div>
+
+    <div className="skill-card">
+      <h3>PostgreSQL</h3>
+      <p>Database design and data management.</p>
+    </div>
+
+    <div className="skill-card">
+      <h3>HTML & CSS</h3>
+      <p>Creating responsive and modern web pages.</p>
+    </div>
+
+    <div className="skill-card">
+      <h3>JavaScript</h3>
+      <p>Frontend logic and web application functionality.</p>
+    </div>
+  </div>
+</section>
+
+<section id="education" className="section">
+  <h2>Education & Career</h2>
+
+  <div className="education-card">
+    <h3>B.E. Information Science Engineering</h3>
+
+    <p>
+      East Point College of Engineering
+    </p>
+
+    <p>
+      Currently pursuing my engineering degree and developing
+      practical skills in Java, Spring Boot, React and PostgreSQL.
+    </p>
+
+    <div className="career-goal">
+      <strong>Career Goal:</strong>
+      <span>Java Full Stack Developer</span>
+    </div>
+  </div>
+</section>
 
 
         {/* CMS FORM */}
@@ -266,7 +345,10 @@ const updateProject = (event) => {
 
           <p>Add a new project to your portfolio.</p>
 
-          <form onSubmit={addProject} className="project-form">
+          <form
+  onSubmit={editingProjectId !== null ? updateProject : addProject}
+  className="project-form"
+>
 
             <input
               type="text"
@@ -404,12 +486,19 @@ const updateProject = (event) => {
 
 
         <section id="contact" className="section">
+  <h2>Contact Me</h2>
 
-          <h2>Contact Me</h2>
+  <p>
+    I am open to learning opportunities, internships,
+    collaborations and software development projects.
+  </p>
 
-          <p>Email: your-email@example.com</p>
-
-        </section>
+  <div className="contact-details">
+    <a href="mailto:asifali802302@gmail.com">
+      asifali802302@gmail.com
+    </a>
+  </div>
+</section>
 
 
         <section className="backend-section">
