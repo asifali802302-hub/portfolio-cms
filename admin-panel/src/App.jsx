@@ -2,8 +2,15 @@ import { useEffect, useState } from 'react'
 import './App.css'
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [loginError, setLoginError] = useState('')
+  const [loginLoading, setLoginLoading] = useState(false)
+
   const [projects, setProjects] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
 
   const [title, setTitle] = useState('')
@@ -14,11 +21,45 @@ function App() {
 
   const [editingProjectId, setEditingProjectId] = useState(null)
 
-  useEffect(() => {
-    loadProjects()
-  }, [])
+  const handleLogin = async (event) => {
+    event.preventDefault()
+
+    setLoginLoading(true)
+    setLoginError('')
+
+    try {
+      const response = await fetch(
+        'http://localhost:8080/api/admin/login',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            username,
+            password,
+          }),
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error('Invalid username or password')
+      }
+
+      setIsLoggedIn(true)
+      setLoginError('')
+      loadProjects()
+    } catch (error) {
+      console.error(error)
+      setLoginError('Invalid username or password.')
+    } finally {
+      setLoginLoading(false)
+    }
+  }
 
   const loadProjects = () => {
+    setLoading(true)
+
     fetch('http://localhost:8080/api/projects')
       .then((response) => {
         if (!response.ok) {
@@ -63,7 +104,8 @@ function App() {
         ? `http://localhost:8080/api/projects/${editingProjectId}`
         : 'http://localhost:8080/api/projects'
 
-    const method = editingProjectId !== null ? 'PUT' : 'POST'
+    const method =
+      editingProjectId !== null ? 'PUT' : 'POST'
 
     setMessage(
       editingProjectId !== null
@@ -141,7 +183,9 @@ function App() {
         }
 
         setProjects((currentProjects) =>
-          currentProjects.filter((project) => project.id !== id)
+          currentProjects.filter(
+            (project) => project.id !== id
+          )
         )
 
         setMessage('Project deleted successfully!')
@@ -152,38 +196,120 @@ function App() {
       })
   }
 
+  const handleLogout = () => {
+    setIsLoggedIn(false)
+    setUsername('')
+    setPassword('')
+    clearForm()
+    setMessage('')
+  }
+
+  if (!isLoggedIn) {
+    return (
+      <div className="login-page">
+
+        <div className="login-card">
+
+          <h1>Portfolio CMS</h1>
+
+          <p>Admin Login</p>
+
+          <form onSubmit={handleLogin}>
+
+            <input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(event) =>
+                setUsername(event.target.value)
+              }
+              required
+            />
+
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(event) =>
+                setPassword(event.target.value)
+              }
+              required
+            />
+
+            <button
+              type="submit"
+              disabled={loginLoading}
+            >
+              {loginLoading
+                ? 'Logging in...'
+                : 'Login'}
+            </button>
+
+          </form>
+
+          {loginError && (
+            <p className="login-error">
+              {loginError}
+            </p>
+          )}
+
+        </div>
+
+      </div>
+    )
+  }
+
   return (
     <div className="admin-app">
 
       <header className="admin-navbar">
+
         <div>
           <h1>Portfolio CMS</h1>
           <p>Admin Dashboard</p>
         </div>
 
-        <a
-          href="http://localhost:5173"
-          target="_blank"
-          rel="noreferrer"
-        >
-          View Portfolio
-        </a>
+        <div className="navbar-actions">
+
+          <a
+            href="http://localhost:5173"
+            target="_blank"
+            rel="noreferrer"
+          >
+            View Portfolio
+          </a>
+
+          <button
+            type="button"
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
+
+        </div>
+
       </header>
 
       <main className="admin-container">
 
         <section className="dashboard-header">
+
           <div>
             <h2>Dashboard</h2>
+
             <p>
               Manage the projects displayed on your portfolio.
             </p>
           </div>
 
           <div className="project-count">
+
             <strong>{projects.length}</strong>
+
             <span>Projects</span>
+
           </div>
+
         </section>
 
         <section className="admin-card">
@@ -245,7 +371,10 @@ function App() {
 
             <div className="form-buttons">
 
-              <button type="submit" className="primary-btn">
+              <button
+                type="submit"
+                className="primary-btn"
+              >
                 {editingProjectId !== null
                   ? 'Update Project'
                   : 'Add Project'}
@@ -276,12 +405,17 @@ function App() {
         <section className="admin-card">
 
           <div className="section-heading">
+
             <div>
+
               <h2>Manage Projects</h2>
+
               <p>
                 Projects currently stored in PostgreSQL.
               </p>
+
             </div>
+
           </div>
 
           {loading ? (
@@ -292,12 +426,14 @@ function App() {
             <div className="admin-projects">
 
               {projects.map((project) => (
+
                 <div
                   className="admin-project"
                   key={project.id}
                 >
 
                   <div>
+
                     <h3>{project.title}</h3>
 
                     <p>{project.description}</p>
@@ -305,13 +441,16 @@ function App() {
                     <span>
                       {project.technologies}
                     </span>
+
                   </div>
 
                   <div className="project-actions">
 
                     <button
                       type="button"
-                      onClick={() => editProject(project)}
+                      onClick={() =>
+                        editProject(project)
+                      }
                     >
                       Edit
                     </button>
@@ -328,6 +467,7 @@ function App() {
                   </div>
 
                 </div>
+
               ))}
 
             </div>
@@ -338,7 +478,11 @@ function App() {
       </main>
 
       <footer className="admin-footer">
-        <p>Portfolio CMS Admin Panel © 2026 Md Asif Ali</p>
+
+        <p>
+          Portfolio CMS Admin Panel © 2026 Md Asif Ali
+        </p>
+
       </footer>
 
     </div>
