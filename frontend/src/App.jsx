@@ -17,7 +17,7 @@ function App() {
   const [editingProjectId, setEditingProjectId] = useState(null)
 
   useEffect(() => {
-    fetch('http://localhost:8080/api/health')
+    fetch('https://portfolio-cms-backend-i0hq.onrender.com/api/health')
       .then((response) => {
         if (!response.ok) {
           throw new Error('Backend request failed')
@@ -38,7 +38,7 @@ function App() {
   }, [])
 
   const loadProjects = () => {
-    fetch('http://localhost:8080/api/projects')
+    fetch('https://portfolio-cms-backend-i0hq.onrender.com/api/projects')
       .then((response) => {
         if (!response.ok) {
           throw new Error('Projects request failed')
@@ -53,157 +53,161 @@ function App() {
         console.error('Error loading projects:', error)
       })
   }
+
   const addProject = (event) => {
-  event.preventDefault()
+    event.preventDefault()
 
-  setMessage('Adding project...')
+    setMessage('Adding project...')
 
-  const project = {
-    title: title,
-    description: description,
-    technologies: technologies,
-    githubUrl: githubUrl,
-    liveUrl: liveUrl,
+    const project = {
+      title: title,
+      description: description,
+      technologies: technologies,
+      githubUrl: githubUrl,
+      liveUrl: liveUrl,
+    }
+
+    fetch('https://portfolio-cms-backend-i0hq.onrender.com/api/projects', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(project),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to add project')
+        }
+
+        return response.json()
+      })
+      .then((data) => {
+        setProjects((currentProjects) => [
+          ...currentProjects,
+          data,
+        ])
+
+        setTitle('')
+        setDescription('')
+        setTechnologies('')
+        setGithubUrl('')
+        setLiveUrl('')
+
+        setMessage('Project added successfully!')
+      })
+      .catch((error) => {
+        console.error('Error adding project:', error)
+        setMessage('Failed to add project.')
+      })
   }
 
-  fetch('http://localhost:8080/api/projects', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(project),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error('Failed to add project')
-      }
-
-      return response.json()
-    })
-    .then((data) => {
-      setProjects((currentProjects) => [
-        ...currentProjects,
-        data,
-      ])
-
-      setTitle('')
-      setDescription('')
-      setTechnologies('')
-      setGithubUrl('')
-      setLiveUrl('')
-
-      setMessage('Project added successfully!')
-    })
-    .catch((error) => {
-      console.error('Error adding project:', error)
-      setMessage('Failed to add project.')
-    })
-}
   const deleteProject = (id) => {
-  const confirmDelete = window.confirm(
-    'Are you sure you want to delete this project?'
-  )
+    const confirmDelete = window.confirm(
+      'Are you sure you want to delete this project?'
+    )
 
-  if (!confirmDelete) {
-    return
-  }
+    if (!confirmDelete) {
+      return
+    }
 
-  fetch(`http://localhost:8080/api/projects/${id}`, {
-    method: 'DELETE',
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error('Failed to delete project')
-      }
-
-      setProjects((currentProjects) =>
-        currentProjects.filter((project) => project.id !== id)
-      )
-
-      setMessage('Project deleted successfully!')
+    fetch(`https://portfolio-cms-backend-i0hq.onrender.com/api/projects/${id}`, {
+      method: 'DELETE',
     })
-    .catch((error) => {
-      console.error('Error deleting project:', error)
-      setMessage('Failed to delete project.')
-    })
-}
-    const editProject = (project) => {
-  setEditingProjectId(project.id)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to delete project')
+        }
 
-  setTitle(project.title)
-  setDescription(project.description)
-  setTechnologies(project.technologies)
-  setGithubUrl(project.githubUrl || '')
-  setLiveUrl(project.liveUrl || '')
-
-  setMessage('Editing project...')
-}
-const cancelEdit = () => {
-  setEditingProjectId(null)
-
-  setTitle('')
-  setDescription('')
-  setTechnologies('')
-  setGithubUrl('')
-  setLiveUrl('')
-
-  setMessage('')
-}
-
-const updateProject = (event) => {
-  event.preventDefault()
-
-  if (editingProjectId === null) {
-    return
-  }
-
-  setMessage('Updating project...')
-
-  const project = {
-    title: title,
-    description: description,
-    technologies: technologies,
-    githubUrl: githubUrl,
-    liveUrl: liveUrl,
-  }
-
-  fetch(`http://localhost:8080/api/projects/${editingProjectId}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(project),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error('Failed to update project')
-      }
-
-      return response.json()
-    })
-    .then((updatedProject) => {
-      setProjects((currentProjects) =>
-        currentProjects.map((project) =>
-          project.id === updatedProject.id
-            ? updatedProject
-            : project
+        setProjects((currentProjects) =>
+          currentProjects.filter((project) => project.id !== id)
         )
-      )
 
-      setTitle('')
-      setDescription('')
-      setTechnologies('')
-      setGithubUrl('')
-      setLiveUrl('')
-      setEditingProjectId(null)
+        setMessage('Project deleted successfully!')
+      })
+      .catch((error) => {
+        console.error('Error deleting project:', error)
+        setMessage('Failed to delete project.')
+      })
+  }
 
-      setMessage('Project updated successfully!')
+  const editProject = (project) => {
+    setEditingProjectId(project.id)
+
+    setTitle(project.title)
+    setDescription(project.description)
+    setTechnologies(project.technologies)
+    setGithubUrl(project.githubUrl || '')
+    setLiveUrl(project.liveUrl || '')
+
+    setMessage('Editing project...')
+  }
+
+  const cancelEdit = () => {
+    setEditingProjectId(null)
+
+    setTitle('')
+    setDescription('')
+    setTechnologies('')
+    setGithubUrl('')
+    setLiveUrl('')
+
+    setMessage('')
+  }
+
+  const updateProject = (event) => {
+    event.preventDefault()
+
+    if (editingProjectId === null) {
+      return
+    }
+
+    setMessage('Updating project...')
+
+    const project = {
+      title: title,
+      description: description,
+      technologies: technologies,
+      githubUrl: githubUrl,
+      liveUrl: liveUrl,
+    }
+
+    fetch(`https://portfolio-cms-backend-i0hq.onrender.com/api/projects/${editingProjectId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(project),
     })
-    .catch((error) => {
-      console.error('Error updating project:', error)
-      setMessage('Failed to update project.')
-    })
-}
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to update project')
+        }
+
+        return response.json()
+      })
+      .then((updatedProject) => {
+        setProjects((currentProjects) =>
+          currentProjects.map((project) =>
+            project.id === updatedProject.id
+              ? updatedProject
+              : project
+          )
+        )
+
+        setTitle('')
+        setDescription('')
+        setTechnologies('')
+        setGithubUrl('')
+        setLiveUrl('')
+        setEditingProjectId(null)
+
+        setMessage('Project updated successfully!')
+      })
+      .catch((error) => {
+        console.error('Error updating project:', error)
+        setMessage('Failed to update project.')
+      })
+  }
 
   return (
     <div className="app">
@@ -213,11 +217,11 @@ const updateProject = (event) => {
 
         <nav>
           <a href="#home">Home</a>
-<a href="#about">About</a>
-<a href="#skills">Skills</a>
-<a href="#education">Education</a>
-<a href="#projects">Projects</a>
-<a href="#contact">Contact</a>
+          <a href="#about">About</a>
+          <a href="#skills">Skills</a>
+          <a href="#education">Education</a>
+          <a href="#projects">Projects</a>
+          <a href="#contact">Contact</a>
         </nav>
       </header>
 
@@ -251,90 +255,91 @@ const updateProject = (event) => {
 
 
         <section id="about" className="section">
-  <h2>About Me</h2>
+          <h2>About Me</h2>
 
-  <p>
-    I am Md Asif Ali, an Information Science Engineering student
-    at East Point College of Engineering. I am interested in Java,
-    Spring Boot, React, PostgreSQL and full-stack web development.
-    I am currently building practical projects to improve my
-    development skills and grow as a Java Full Stack Developer.
-  </p>
+          <p>
+            I am Md Asif Ali, an Information Science Engineering student
+            at East Point College of Engineering. I am interested in Java,
+            Spring Boot, React, PostgreSQL and full-stack web development.
+            I am currently building practical projects to improve my
+            development skills and grow as a Java Full Stack Developer.
+          </p>
 
-  <div className="about-details">
-    <div>
-      <strong>Education</strong>
-      <span>B.E. Information Science Engineering</span>
-    </div>
+          <div className="about-details">
+            <div>
+              <strong>Education</strong>
+              <span>B.E. Information Science Engineering</span>
+            </div>
 
-    <div>
-      <strong>College</strong>
-      <span>East Point College of Engineering</span>
-    </div>
+            <div>
+              <strong>College</strong>
+              <span>East Point College of Engineering</span>
+            </div>
 
-    <div>
-      <strong>Status</strong>
-      <span>Student</span>
-    </div>
-  </div>
-</section>
-<section id="skills" className="section">
-  <h2>My Skills</h2>
+            <div>
+              <strong>Status</strong>
+              <span>Student</span>
+            </div>
+          </div>
+        </section>
 
-  <div className="skills-grid">
-    <div className="skill-card">
-      <h3>Java</h3>
-      <p>Core Java and object-oriented programming.</p>
-    </div>
+        <section id="skills" className="section">
+          <h2>My Skills</h2>
 
-    <div className="skill-card">
-      <h3>Spring Boot</h3>
-      <p>Backend development and REST APIs.</p>
-    </div>
+          <div className="skills-grid">
+            <div className="skill-card">
+              <h3>Java</h3>
+              <p>Core Java and object-oriented programming.</p>
+            </div>
 
-    <div className="skill-card">
-      <h3>React</h3>
-      <p>Building interactive frontend applications.</p>
-    </div>
+            <div className="skill-card">
+              <h3>Spring Boot</h3>
+              <p>Backend development and REST APIs.</p>
+            </div>
 
-    <div className="skill-card">
-      <h3>PostgreSQL</h3>
-      <p>Database design and data management.</p>
-    </div>
+            <div className="skill-card">
+              <h3>React</h3>
+              <p>Building interactive frontend applications.</p>
+            </div>
 
-    <div className="skill-card">
-      <h3>HTML & CSS</h3>
-      <p>Creating responsive and modern web pages.</p>
-    </div>
+            <div className="skill-card">
+              <h3>PostgreSQL</h3>
+              <p>Database design and data management.</p>
+            </div>
 
-    <div className="skill-card">
-      <h3>JavaScript</h3>
-      <p>Frontend logic and web application functionality.</p>
-    </div>
-  </div>
-</section>
+            <div className="skill-card">
+              <h3>HTML & CSS</h3>
+              <p>Creating responsive and modern web pages.</p>
+            </div>
 
-<section id="education" className="section">
-  <h2>Education & Career</h2>
+            <div className="skill-card">
+              <h3>JavaScript</h3>
+              <p>Frontend logic and web application functionality.</p>
+            </div>
+          </div>
+        </section>
 
-  <div className="education-card">
-    <h3>B.E. Information Science Engineering</h3>
+        <section id="education" className="section">
+          <h2>Education & Career</h2>
 
-    <p>
-      East Point College of Engineering
-    </p>
+          <div className="education-card">
+            <h3>B.E. Information Science Engineering</h3>
 
-    <p>
-      Currently pursuing my engineering degree and developing
-      practical skills in Java, Spring Boot, React and PostgreSQL.
-    </p>
+            <p>
+              East Point College of Engineering
+            </p>
 
-    <div className="career-goal">
-      <strong>Career Goal:</strong>
-      <span>Java Full Stack Developer</span>
-    </div>
-  </div>
-</section>
+            <p>
+              Currently pursuing my engineering degree and developing
+              practical skills in Java, Spring Boot, React and PostgreSQL.
+            </p>
+
+            <div className="career-goal">
+              <strong>Career Goal:</strong>
+              <span>Java Full Stack Developer</span>
+            </div>
+          </div>
+        </section>
 
 
         {/* CMS FORM */}
@@ -346,9 +351,9 @@ const updateProject = (event) => {
           <p>Add a new project to your portfolio.</p>
 
           <form
-  onSubmit={editingProjectId !== null ? updateProject : addProject}
-  className="project-form"
->
+            onSubmit={editingProjectId !== null ? updateProject : addProject}
+            className="project-form"
+          >
 
             <input
               type="text"
@@ -388,17 +393,17 @@ const updateProject = (event) => {
             />
 
             <button type="submit">
-  {editingProjectId !== null ? 'Update Project' : 'Add Project'}
-</button>
+              {editingProjectId !== null ? 'Update Project' : 'Add Project'}
+            </button>
 
-{editingProjectId !== null && (
-  <button
-    type="button"
-    onClick={cancelEdit}
-  >
-    Cancel Edit
-  </button>
-)}
+            {editingProjectId !== null && (
+              <button
+                type="button"
+                onClick={cancelEdit}
+              >
+                Cancel Edit
+              </button>
+            )}
 
           </form>
 
@@ -457,20 +462,20 @@ const updateProject = (event) => {
                         Live Project
                       </a>
                     )}
-                    
+
                     <button
                       type="button"
                       onClick={() => editProject(project)}
                     >
                       Edit
-                    </button> 
+                    </button>
 
                     <button
                       type="button"
                       onClick={() => deleteProject(project.id)}
                     >
-                     Delete
-                   </button>
+                      Delete
+                    </button>
 
                   </div>
 
@@ -486,19 +491,19 @@ const updateProject = (event) => {
 
 
         <section id="contact" className="section">
-  <h2>Contact Me</h2>
+          <h2>Contact Me</h2>
 
-  <p>
-    I am open to learning opportunities, internships,
-    collaborations and software development projects.
-  </p>
+          <p>
+            I am open to learning opportunities, internships,
+            collaborations and software development projects.
+          </p>
 
-  <div className="contact-details">
-    <a href="mailto:asifali802302@gmail.com">
-      asifali802302@gmail.com
-    </a>
-  </div>
-</section>
+          <div className="contact-details">
+            <a href="mailto:asifali802302@gmail.com">
+              asifali802302@gmail.com
+            </a>
+          </div>
+        </section>
 
 
         <section className="backend-section">
