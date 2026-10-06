@@ -272,7 +272,7 @@ function App() {
         <div className="navbar-actions">
 
           <a
-            href="http://localhost:5173"
+            href="https://portfolio-cms-one-woad.vercel.app"
             target="_blank"
             rel="noreferrer"
           >
