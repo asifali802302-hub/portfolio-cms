@@ -29,7 +29,7 @@ function App() {
 
     try {
       const response = await fetch(
-        'http://localhost:8080/api/admin/login',
+        'https://portfolio-cms-backend-i0hq.onrender.com/api/admin/login',
         {
           method: 'POST',
           headers: {
@@ -60,7 +60,7 @@ function App() {
   const loadProjects = () => {
     setLoading(true)
 
-    fetch('http://localhost:8080/api/projects')
+    fetch('https://portfolio-cms-backend-i0hq.onrender.com/api/projects')
       .then((response) => {
         if (!response.ok) {
           throw new Error('Failed to load projects')
@@ -101,8 +101,8 @@ function App() {
 
     const url =
       editingProjectId !== null
-        ? `http://localhost:8080/api/projects/${editingProjectId}`
-        : 'http://localhost:8080/api/projects'
+        ? `https://portfolio-cms-backend-i0hq.onrender.com/api/projects/${editingProjectId}`
+        : 'https://portfolio-cms-backend-i0hq.onrender.com/api/projects'
 
     const method =
       editingProjectId !== null ? 'PUT' : 'POST'
@@ -174,7 +174,7 @@ function App() {
       return
     }
 
-    fetch(`http://localhost:8080/api/projects/${id}`, {
+    fetch(`https://portfolio-cms-backend-i0hq.onrender.com/api/projects/${id}`, {
       method: 'DELETE',
     })
       .then((response) => {
